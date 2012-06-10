@@ -1,0 +1,21 @@
+#!/usr/bin/env pophery.py
+# encoding: UTF-8
+# data slots
+(^0)this(0$)(^1)andthat(1$)(^2)P(2$)(^3)`!(3$)
+# clipboard
+(^%)(%$)
+# accumulator
+(^?)(?$)
+# name of currently executing instruction slot
+(^`!)!(`!$)
+# begin program.  put contents of slot `3` into accumulator
+(^!)3(!$)SCAV
+# select slot named by the accumulator and... put the
+# contents of the accumulator in it.  No, no!  We need these
+# to be two different names!  Argh!
+SV
+# put contents of slot `3` into accumulator, again
+3SCAV
+2SC3SDSV
+(^P)0(P$)SCAVO
+(^Q)1(Q$)SCAVO

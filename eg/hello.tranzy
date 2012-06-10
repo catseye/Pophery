@@ -1,0 +1,5 @@
+#!/usr/bin/env pophery.py
+# -- encoding: UTF-8
+(^?)Hello, ωorld
+!
+(?$)(^!)O(!$)OO
