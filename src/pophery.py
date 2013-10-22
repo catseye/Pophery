@@ -930,7 +930,7 @@ def main(argv):
         exit_code = 0
     if options.run_tests:
         import doctest
-        (fails, something) = doctest.testmod()
+        (fails, something) = doctest.testmod(verbose=True)
         if fails == 0:
             print "All tests passed."
             exit_code = 0
