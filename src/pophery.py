@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
 """
@@ -64,7 +64,7 @@ class MutableString(object):
 
     """
     def __init__(self, initial):
-        self.string = unicode(initial)
+        self.string = initial
 
     def __str__(self):
         return self.__unicode__()
@@ -85,7 +85,7 @@ class MutableString(object):
         return self.string.find(sub)
     
     def set(self, string):
-        self.string = unicode(string)
+        self.string = string
 
     def pos_left(self, locator, delta):
         """Return the 0-based position within this MutableString of the
@@ -96,7 +96,7 @@ class MutableString(object):
         is changed.
 
         >>> a = MutableString("Mom(*)entous")
-        >>> print a.pos_left("(*)", 0)
+        >>> print(a.pos_left("(*)", 0))
         3
 
         """
@@ -115,7 +115,7 @@ class MutableString(object):
         is changed.
 
         >>> a = MutableString("Mom(*)entous")
-        >>> print a.pos_right("(*)", 0)
+        >>> print(a.pos_right("(*)", 0))
         6
 
         """
@@ -132,22 +132,21 @@ class MutableString(object):
 
         >>> a = MutableString("Momentous")
         >>> a.insert_locator("(*)", 3)
-        >>> print str(a)
+        >>> print(str(a))
         Mom(*)entous
 
         """
-        self.set(self[:pos] + unicode(locator) + self[pos:])
+        self.set(self[:pos] + locator + self[pos:])
 
     def remove_locator(self, locator):
         """Remove the given locator from this string.
 
         >>> a = MutableString("Mom(*)entous")
         >>> a.remove_locator("(*)")
-        >>> print str(a)
+        >>> print(str(a))
         Momentous
 
         """
-        locator = unicode(locator)
         posl = self.pos_left(locator, 0)
         posr = self.pos_right(locator, 0)
         self.set(self[:posl] + self[posr:])
@@ -160,11 +159,10 @@ class MutableString(object):
 
         >>> a = MutableString("Mom(*)entous")
         >>> a.move_locator("(*)", +3)
-        >>> print str(a)
+        >>> print(str(a))
         Moment(*)ous
 
         """
-        locator = unicode(locator)
         posl = self.pos_left(locator, 0)
         posr = self.pos_right(locator, 0)
         self.set(self[:posl] + self[posr:])
@@ -181,27 +179,26 @@ class MutableString(object):
 
         >>> a = MutableString("Mom(*)en(+)tous")
         >>> a.slide_locator("(*)", +1)
-        >>> print str(a)
+        >>> print(str(a))
         Mome(*)n(+)tous
         >>> a.slide_locator("(*)", -1)
-        >>> print str(a)
+        >>> print(str(a))
         Mom(*)en(+)tous
 
         >>> b = MutableString("(-)Cassowary(+)")
         >>> b.slide_locator("(+)", +1)
-        >>> print str(b)
+        >>> print(str(b))
         (-)Cassowary(+)
         >>> b.slide_locator("(-)", -1)
-        >>> print str(b)
+        >>> print(str(b))
         (-)Cassowary(+)
 
         >>> c = MutableString("Imb(+)r(%)oglio")
         >>> c.slide_locator("(+)", +1)
-        >>> print str(c)
+        >>> print(str(c))
         Imbr(+)(%)oglio
 
         """
-        locator = unicode(locator)
         if delta == +1:
             matching = True
             target = self.pos_right(locator, 0)
@@ -231,7 +228,7 @@ class MutableString(object):
         """Retrieve the substring between the two given locators.
 
         >>> a = MutableString("This is (a)my string(b) you know.")
-        >>> print a.read("(a)", "(b)")
+        >>> print(a.read("(a)", "(b)"))
         my string
 
         """
@@ -244,13 +241,13 @@ class MutableString(object):
 
         >>> a = MutableString("This is (a)my string(b) you know.")
         >>> a.update("(a)", "(b)", "crazy talk")
-        >>> print str(a)
+        >>> print(str(a))
         This is (a)crazy talk(b) you know.
 
         """
         a = self.pos_right(left, 0)
         b = self.pos_left(right, 0)
-        self.set(self.string[:a] + unicode(string) + self.string[b:])
+        self.set(self.string[:a] + str(string) + self.string[b:])
 
     def find_matching(self, pos):
         """Find the parenthesis which matches the parenthesis at the given
@@ -312,7 +309,7 @@ class SlottedString(MutableString):
         
         >>> a = SlottedString("This is (^a)my slot(a$) you know.")
         >>> a.update_slot('a', 'good stuff')
-        >>> print str(a)
+        >>> print(str(a))
         This is (^a)good stuff(a$) you know.
         >>> a.update_slot('z', 'bad stuff')
         Traceback (most recent call last):
@@ -320,21 +317,19 @@ class SlottedString(MutableString):
         UndefinedLocatorError: (^z)
 
         """
-        slot_name = unicode(slot_name)
         return self.read(u"(^%s)" % slot_name, u"(%s$)" % slot_name)
 
     def read_slot_indirect(self, slot_name):
         """
         >>> p = SlottedString("...(^A)M(A$)...(^R)A(R$)...")
-        >>> print p.read_slot_indirect('R')
+        >>> print(p.read_slot_indirect('R'))
         M
-        >>> print p.read_slot_indirect('A')
+        >>> print(p.read_slot_indirect('A'))
         Traceback (most recent call last):
         ...
         UndefinedLocatorError: (^M)
 
         """
-        slot_name = unicode(slot_name)
         slot_name = self.read_slot(slot_name)
         return self.read_slot(slot_name)
 
@@ -343,10 +338,10 @@ class SlottedString(MutableString):
 
         >>> a = SlottedString("This is (^a)my slot(a$) you know.")
         >>> a.update_slot('a', 'good stuff')
-        >>> print str(a)
+        >>> print(str(a))
         This is (^a)good stuff(a$) you know.
         >>> a.update_slot('a', MutableString('mutable stuff'))
-        >>> print str(a)
+        >>> print(str(a))
         This is (^a)mutable stuff(a$) you know.
         >>> a.update_slot('z', 'bad stuff')
         Traceback (most recent call last):
@@ -354,15 +349,13 @@ class SlottedString(MutableString):
         UndefinedLocatorError: (^z)
 
         """
-        slot_name = unicode(slot_name)
-        string = unicode(string)
         return self.update(u"(^%s)" % slot_name, u"(%s$)" % slot_name, string)
 
     def update_slot_indirect(self, slot_name, string):
         """
         >>> p = SlottedString("Dolphin(^A)M(A$)Dolphin(^R)A(R$)Dolphin")
         >>> p.update_slot_indirect('R', 'Porphyry')
-        >>> print str(p)
+        >>> print(str(p))
         Dolphin(^A)Porphyry(A$)Dolphin(^R)A(R$)Dolphin
 
         """
@@ -373,17 +366,16 @@ class SlottedString(MutableString):
         """
 
         >>> a = SlottedString("(^G)?(G$) (^P)_(P$) (^`P)Q(`P$) (^`K)(^/)Madge(/$)(`K$)")
-        >>> print a.get_slot_name('M')
+        >>> print(a.get_slot_name('M'))
         M
-        >>> print a.get_slot_name('G')
+        >>> print(a.get_slot_name('G'))
         G
-        >>> print a.get_slot_name('P')
+        >>> print(a.get_slot_name('P'))
         Q
-        >>> print a.get_slot_name('K')
+        >>> print(a.get_slot_name('K'))
         Madge
 
         """
-        slot_name = unicode(slot_name)
         name_slot = u"`%s" % slot_name
         try:
             slot_name = self.read_slot(name_slot)
@@ -395,17 +387,17 @@ class SlottedString(MutableString):
     def strip_all_locators(self, content):
         """
         >>> p = Program('')
-        >>> print p.strip_all_locators('')
+        >>> print(p.strip_all_locators(''))
         None
-        >>> print p.strip_all_locators('X')
+        >>> print(p.strip_all_locators('X'))
         X
-        >>> print p.strip_all_locators('Well-tempered')
+        >>> print(p.strip_all_locators('Well-tempered'))
         Well-tempered
-        >>> print p.strip_all_locators('(^8)(^7)(7$)CAT(8$)')
+        >>> print(p.strip_all_locators('(^8)(^7)(7$)CAT(8$)'))
         CAT
-        >>> print p.strip_all_locators('(^8(beat))D')
+        >>> print(p.strip_all_locators('(^8(beat))D'))
         D
-        >>> print p.strip_all_locators('(^8)(^7)(7$)(8$)')
+        >>> print(p.strip_all_locators('(^8)(^7)(7$)(8$)'))
         None
 
         """
@@ -430,14 +422,13 @@ class SlottedString(MutableString):
 
         >>> a = SlottedString("This is my (^a)slot(a$) (^b)y(b$)ou know.")
         >>> a.slide_slot('a', +1)
-        >>> print str(a)
+        >>> print(str(a))
         This is my s(^a)lot (a$)(^b)y(b$)ou know.
         >>> a.slide_slot('b', -1)
-        >>> print str(a)
+        >>> print(str(a))
         This is my s(^a)lot(^b) (a$)(b$)you know.
 
         """
-        slot_name = unicode(slot_name)
         if delta > 0:
             self.slide_locator("(%s$)" % slot_name, delta)
             self.slide_locator("(^%s)" % slot_name, delta)
@@ -459,7 +450,6 @@ class Program(SlottedString):
         done = False
         string = ''
         for line in file.readlines():
-            line = unicode(line, 'utf-8')  # for now
             if line.endswith('\n'):
                 line = line[:-1]
             if line.startswith('#'):
@@ -474,24 +464,24 @@ class Program(SlottedString):
 
         >>> p = Program("(^!)A(!$)B(^M)C(M$)D")
         >>> p.advance()
-        >>> print str(p)
+        >>> print(str(p))
         A(^!)B(!$)(^M)C(M$)D
         >>> p.advance()
-        >>> print str(p)
+        >>> print(str(p))
         AB(^!)(^M)C(!$)(M$)D
         >>> p.advance()
-        >>> print str(p)
+        >>> print(str(p))
         AB(^M)C(^!)(M$)D(!$)
         >>> p.advance()
-        >>> print str(p)
+        >>> print(str(p))
         AB(^M)C(M$)D(^!)(!$)
 
         >>> p = Program("(^!)A(!$)(^Moo)(^Gar)(Gar$)B(Moo$)")
         >>> p.advance()
-        >>> print str(p)
+        >>> print(str(p))
         A(^!)(^Moo)(^Gar)(Gar$)B(!$)(Moo$)
         >>> p.advance()
-        >>> print str(p)
+        >>> print(str(p))
         A(^Moo)(^Gar)(Gar$)B(^!)(!$)(Moo$)
 
         """
@@ -500,17 +490,17 @@ class Program(SlottedString):
     def clean_instruction(self, instruction):
         """
         >>> p = Program('')
-        >>> print p.clean_instruction('')
+        >>> print(p.clean_instruction(''))
         None
-        >>> print p.clean_instruction('X')
+        >>> print(p.clean_instruction('X'))
         X
-        >>> print p.clean_instruction('Well-tempered')
+        >>> print(p.clean_instruction('Well-tempered'))
         W
-        >>> print p.clean_instruction('(^8)(^7)(7$)CAT(8$)')
+        >>> print(p.clean_instruction('(^8)(^7)(7$)CAT(8$)'))
         C
-        >>> print p.clean_instruction('(^8(beat))D')
+        >>> print(p.clean_instruction('(^8(beat))D'))
         D
-        >>> print p.clean_instruction('(^8)(^7)(7$)(8$)')
+        >>> print(p.clean_instruction('(^8)(^7)(7$)(8$)'))
         None
 
         """
@@ -573,18 +563,18 @@ class Semantics(Program):
 
         >>> p = Semantics("(^?)(?$)")
         >>> p.execute('0')
-        >>> print str(p)
+        >>> print(str(p))
         (^?)0(?$)
 
         * X ("cut") erases (updates with the zero-length string) the selection.
 
         >>> p = Semantics("(^/)hi(/$)")
         >>> p.execute('X')
-        >>> print str(p)
+        >>> print(str(p))
         (^/)(/$)
         >>> p = Semantics("(^`/)X(`/$)(^X)hi(X$)")
         >>> p.execute('X')
-        >>> print str(p)
+        >>> print(str(p))
         (^`/)X(`/$)(^X)(X$)
 
         * C ("copy") updates the contents of the clipboard with the contents
@@ -592,11 +582,11 @@ class Semantics(Program):
 
         >>> p = Semantics("(^/)hi(/$)(^%)lo(%$)")
         >>> p.execute('C')
-        >>> print str(p)
+        >>> print(str(p))
         (^/)hi(/$)(^%)hi(%$)
         >>> p = Semantics("(^/)hi(/$)(^J)lo(J$)(^`%)J(`%$)")
         >>> p.execute('C')
-        >>> print str(p)
+        >>> print(str(p))
         (^/)hi(/$)(^J)hi(J$)(^`%)J(`%$)
 
         * V ("paste") updates the contents of the selection with the contents
@@ -604,11 +594,11 @@ class Semantics(Program):
 
         >>> p = Semantics("(^/)hi(/$)(^%)lo(%$)")
         >>> p.execute('V')
-        >>> print str(p)
+        >>> print(str(p))
         (^/)lo(/$)(^%)lo(%$)
         >>> p = Semantics("(^C)lo(C$)(^J)hi(J$)(^`/)J(`/$)(^`%)C(`%$)")
         >>> p.execute('V')
-        >>> print str(p)
+        >>> print(str(p))
         (^C)lo(C$)(^J)lo(J$)(^`/)J(`/$)(^`%)C(`%$)
 
         * S ("select") selects the contents of the slot indirect by the
@@ -616,37 +606,37 @@ class Semantics(Program):
 
         >>> p = Semantics("(^/)foo(/$)(^?)A(?$)(^A)Some text.(A$)")
         >>> p.execute('S')
-        >>> print str(p)
+        >>> print(str(p))
         foo(^?)A(?$)(^A)(^/)Some text.(/$)(A$)
         >>> p = Semantics("(^`/)k(`/$)(^k)foo(k$)(^?)A(?$)(^A)Some text.(A$)")
         >>> p.execute('S')
-        >>> print str(p)
+        >>> print(str(p))
         (^`/)k(`/$)foo(^?)A(?$)(^A)(^k)Some text.(k$)(A$)
 
         * A ("select all") selects the contents of the accumulator.
 
         >>> p = Semantics("(^/)foo(/$)(^?)A(?$)(^A)Some text.(A$)")
         >>> p.execute('A')
-        >>> print str(p)
+        >>> print(str(p))
         foo(^?)(^/)A(/$)(?$)(^A)Some text.(A$)
         >>> p = Semantics("(^`/)r(`/$)(^r)foo(r$)(^?)A(?$)(^A)Some text.(A$)")
         >>> p.execute('A')
-        >>> print str(p)
+        >>> print(str(p))
         (^`/)r(`/$)foo(^?)(^r)A(r$)(?$)(^A)Some text.(A$)
 
         * L ("left") slides the left locator of the selection leftward.
 
         >>> p = Semantics("foo(^/)bar(/$)")
         >>> p.execute('L')
-        >>> print str(p)
+        >>> print(str(p))
         fo(^/)obar(/$)
         >>> p = Semantics("(^/)foobar(/$)")
         >>> p.execute('L')
-        >>> print str(p)
+        >>> print(str(p))
         (^/)foobar(/$)
         >>> p = Semantics("foo(^C)bar(C$)(^`/)C(`/$)")
         >>> p.execute('L')
-        >>> print str(p)
+        >>> print(str(p))
         fo(^C)obar(C$)(^`/)C(`/$)
         >>> p = Semantics("The last time I saw Charlie")
         >>> p.execute('L')
@@ -658,15 +648,15 @@ class Semantics(Program):
 
         >>> p = Semantics("foo(^/)bar(/$)")
         >>> p.execute('R')
-        >>> print str(p)
+        >>> print(str(p))
         foob(^/)ar(/$)
         >>> p = Semantics("foo(^/)(/$)bar")
         >>> p.execute('R')
-        >>> print str(p)
+        >>> print(str(p))
         foo(^/)(/$)bar
         >>> p = Semantics("foo(^C)bar(C$)(^`/)C(`/$)")
         >>> p.execute('R')
-        >>> print str(p)
+        >>> print(str(p))
         foob(^C)ar(C$)(^`/)C(`/$)
         >>> p = Semantics("The last time I saw Charlie")
         >>> p.execute('R')
@@ -680,11 +670,11 @@ class Semantics(Program):
 
         >>> p = Semantics("foo(^/)bar(/$)baz")
         >>> p.execute('E')
-        >>> print str(p)
+        >>> print(str(p))
         foobar(^/)(/$)baz
         >>> p = Semantics("foo(^a)b(^`/)a(`/$)r(a$)baz")
         >>> p.execute('E')
-        >>> print str(p)
+        >>> print(str(p))
         foob(^`/)a(`/$)r(^a)(a$)baz
         >>> p = Semantics("The last time I saw Charlie")
         >>> p.execute('E')
@@ -698,37 +688,37 @@ class Semantics(Program):
 
         >>> p = Semantics("(^?)By hook or by crook, we will.(?$)(^%)ook(%$)")
         >>> p.execute('F')
-        >>> print str(p)
+        >>> print(str(p))
         (^?)By h(^/)ook(/$) or by crook, we will.(?$)(^%)ook(%$)
 
         * D ("drag-and-drop") moves the selection to the accumulator.
 
         >>> p = Semantics("(^/)hi(/$)(^?)lo(?$)")
         >>> p.execute('D')
-        >>> print str(p)
+        >>> print(str(p))
         hi(^?)(^/)hi(/$)(?$)
         >>> p = Semantics("(^C)lo(C$)(^J)hi(J$)(^`/)J(`/$)(^`?)C(`?$)")
         >>> p.execute('D')
-        >>> print str(p)
+        >>> print(str(p))
         (^C)(^J)hi(J$)(C$)hi(^`/)J(`/$)(^`?)C(`?$)
 
         * I ("input") waits for a line to appear on standard input, then
           places it (sans newline) in the accumulator.
 
-        >>> from StringIO import StringIO
+        >>> from io import StringIO
         >>> p = Semantics("(^?)(?$)")
         >>> p.input = StringIO(chr(10).join(["Line.", "Line!", "LINE!"]))
         >>> p.execute('I')
-        >>> print str(p)
+        >>> print(str(p))
         (^?)Line.(?$)
         >>> p.execute('I')
-        >>> print str(p)
+        >>> print(str(p))
         (^?)Line!(?$)
         >>> p.execute('I')
-        >>> print str(p)
+        >>> print(str(p))
         (^?)LINE!(?$)
         >>> p.execute('I')
-        >>> print str(p)
+        >>> print(str(p))
         (^?)(?$)
 
         * O ("output") outputs the string in the accumulator to standard
@@ -737,7 +727,7 @@ class Semantics(Program):
         >>> p = Semantics("(^?)Hello, world!(?$)")
         >>> p.execute('O')
         Hello, world!
-        >>> print str(p)
+        >>> print(str(p))
         (^?)Hello, world!(?$)
 
         Now we demonstrate some idioms.
@@ -747,21 +737,21 @@ class Semantics(Program):
 
         >>> p = Semantics("(^0)data(0$)(^%)(%$)(^?)(?$)(^!)0(!$)SCAV")
         >>> p.run()
-        >>> print str(p)
+        >>> print(str(p))
         (^0)data(0$)(^%)data(%$)(^?)(^/)data(/$)(?$)0SCAV(^!)(!$)
 
         New data, say the literal string 1, can be stored into slot 0 with:
 
         >>> p = Semantics("(^0)data(0$)(^%)(%$)(^?)(?$)(^!)1(!$)AC0SV")
         >>> p.run()
-        >>> print str(p)
+        >>> print(str(p))
         (^0)(^/)1(/$)(0$)(^%)1(%$)(^?)0(?$)1AC0SV(^!)(!$)
 
         To copy from any arbitrary slot (say 0) to another (say 1), we can say:
 
         >>> p = Semantics("(^0)hi(0$)(^1)(1$)(^%)(%$)(^?)(?$)(^!)0(!$)SC1SV")
         >>> p.run()
-        >>> print str(p)
+        >>> print(str(p))
         (^0)hi(0$)(^1)(^/)hi(/$)(1$)(^%)hi(%$)(^?)1(?$)0SC1SV(^!)(!$)
 
         Accessing a slot with a longer name, such as (^123)xyz(123$), can be
@@ -769,7 +759,7 @@ class Semantics(Program):
 
         >>> p = Semantics("(^0)(0$)(^123)xyz(123$)(^%)(%$)(^?)(?$)(^!)1(!$)AC0SV2AC0SEV3AC0SEV0SCAVSD")
         >>> p.run()
-        >>> print str(p)
+        >>> print(str(p))
         (^0)123(0$)(^123)xyz(123$)(^%)123(%$)(^?)(^/)xyz(/$)(?$)1AC0SV2AC0SEV3AC0SEV0SCAVSD(^!)(!$)
 
         To write data, say (^8)foo(8$), into a slot whose name is stored in
@@ -777,7 +767,7 @@ class Semantics(Program):
 
         >>> p = Semantics("(^8)foo(8$)(^9)jim(9$)(^jim)(jim$)(^%)(%$)(^?)(?$)(^!)8(!$)SC9SDSV")
         >>> p.run()
-        >>> print str(p)
+        >>> print(str(p))
         (^8)foo(8$)(^9)jim(9$)(^jim)(^/)foo(/$)(jim$)(^%)foo(%$)(^?)jim(?$)8SC9SDSV(^!)(!$)
 
         Finally, a complete, if simple, program:
@@ -852,10 +842,7 @@ class Semantics(Program):
             self.update_slot(self.get_slot_name('?'), new_selection)
         elif instruction == 'O':
             line = self.read_slot('?') + "\n"
-            try:
-                self.output.write(line.encode('UTF-8'))
-            except UnicodeEncodeError:
-                self.output.write(line.encode('ascii', 'xmlcharrefreplace'))
+            self.output.write(line)
         elif instruction == 'I':
             text = self.input.readline()
             if text.endswith('\n'):
@@ -896,13 +883,13 @@ class TracedProgram(Semantics):
         super(TracedProgram, self).__init__(initial)
 
     def run(self):
-        print "[%s]" % str(self)
+        print("[%s]" % str(self))
         super(TracedProgram, self).run()
 
     def step(self):
         result = super(TracedProgram, self).step()
         if result:
-            print "[%s]" % str(self)
+            print("[%s]" % str(self))
         return result
 
 
@@ -924,15 +911,15 @@ def main(argv):
     (options, args) = optparser.parse_args(argv[1:])
     exit_code = None
     if options.show_license:
-        print sys.argv[0]
-        print __doc__
-        print LICENSE
+        print(sys.argv[0])
+        print(__doc__)
+        print(LICENSE)
         exit_code = 0
     if options.run_tests:
         import doctest
         (fails, something) = doctest.testmod(verbose=True)
         if fails == 0:
-            print "All tests passed."
+            print("All tests passed.")
             exit_code = 0
         else:
             exit_code = 1
